@@ -1,0 +1,5 @@
+*.resolved
+*.pyc
+*.pyo
+*.claude
+planer/
