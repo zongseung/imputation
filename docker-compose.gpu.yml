@@ -1,0 +1,12 @@
+# GPU 지원 오버라이드 (NVIDIA Container Toolkit 필요)
+# 사용법: docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+
+services:
+  worker:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

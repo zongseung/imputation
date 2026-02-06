@@ -1,0 +1,39 @@
+version: "3.8"
+
+# Development override - run with:
+#   docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile.api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+      - upload_data:/app/uploads
+      - result_data:/app/results
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=dev
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile.worker
+    command: celery -A worker.celery_app:celery worker --loglevel=debug --concurrency=1
+    volumes:
+      - ./backend:/app
+      - upload_data:/app/uploads
+      - result_data:/app/results
+    environment:
+      - APP_ENV=dev
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
